@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% include "model-header.html" %}
+</head>
+ 
+<body>
+    <div class="form">
+      <h1>Detalhes do Pagamento PIX</h1>
+          <p><strong>Nome:</strong> {{ pix.devedor.nome }}</p>
+          <p><strong>CPF:</strong> {{ pix.devedor.cpf }}</p>
+          <p><strong>Valor:</strong> R$ {{ pix.valor.original }}</p>
+          <p><strong>Status:</strong> {{ pix.status }}</p>
+          <p><strong>Código Pix (Copia e Cola):</strong></p>
+          <textarea rows="5" cols="60" readonly>{{ pix.pixCopiaECola }}</textarea>
+        <br><br>
+    </div><br><br>
+
+    <!-- pix.html -->
+    <h2>QR Code</h2>
+      <div class="borde_qrcode">
+      <img src="{{ qr_code_url }}" alt="QR Code do PIX" style="width:300px;height:300px;">
+      </div>
+
+      {% include "model-footer.html" %}
+
+</body>
+</html>
