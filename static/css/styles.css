@@ -1,0 +1,216 @@
+
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+}
+
+/* Corpo da página */
+body.index-page {
+    font-family: Arial, sans-serif;
+    background-color: #4e4f5000;
+    color: #212020;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* Container do Header */
+.container-fluid.container-xl {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 30px;
+}
+
+/* Logo */
+.logo img {
+    max-height: 50px;
+    cursor: pointer;
+}
+
+/* Navegação (Navmenu) */
+.navmenu {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.navmenu ul {
+    display: flex;
+    list-style: none;
+    padding-left: 0;
+}
+
+.navmenu li {
+    position: relative;
+    margin-right: 30px;
+}
+
+.navmenu a {
+    text-decoration: none;
+    color: #333;
+    font-size: 16px;
+    font-weight: 600;
+    transition: color 0.3s, transform 0.3s;
+}
+
+.navmenu a.active {
+    color: #529dff;
+}
+
+.navmenu a:hover {
+    color: #529dff;
+    transform: translateY(-3px);
+}
+
+/* Aumentando o peso da fonte do nome de usuário */
+.navmenu li strong {
+    font-weight: 800; /* Mais forte do que 600 */
+    font-size: 16px;
+    color: rgb(82, 157, 255);
+}
+
+/* Estilo de responsividade */
+@media (max-width: 768px) {
+    .navmenu ul {
+        flex-direction: column;
+        background-color: rgba(33, 37, 41, 0.9);
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        padding: 20px;
+        margin-top: 60px;
+        display: none;
+    }
+
+    .navmenu.active ul {
+        display: block;
+    }
+
+    .navmenu li {
+        margin-right: 0;
+        margin-bottom: 15px;
+    }
+
+    .navmenu a {
+        font-size: 18px;
+        padding: 10px;
+        color: white;
+    }
+}
+
+/* Adiciona um espaçamento superior ao conteúdo para evitar sobreposição */
+body > .form {
+    margin-top: 100px;
+}
+
+/* Estilo para a div do formulário */
+.form {
+    text-align: center;
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 500px;
+}
+
+h1 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    color: #343a40;
+}
+
+p {
+    font-size: 1rem;
+    margin: 10px 0;
+    color: #495057;
+}
+
+textarea {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+    background-color: #f8f9fa;
+    resize: none;
+}
+
+.borde_qrcode {
+    margin-top: 20px;
+    margin-bottom: 30px;
+    border: 2px solid #ced4da;
+    border-radius: 10px;
+}
+
+h2 {
+    margin-top: 30px;
+    font-size: 1.5rem;
+    color: #343a40;
+}
+
+/* Estilos do footer */
+.footer {
+    text-align: center;
+    padding: 10px;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: #f8f9fa;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    margin-top: 40px; /* Ajuste o valor conforme necessário */
+}
+
+
+.footer .social-links a {
+    color: #007bff;
+    margin: 0 10px;
+    text-decoration: none;
+}
+
+.footer .social-links a:hover {
+    color: #0056b3;
+}
+
+.footer .credits a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.footer .credits a:hover {
+    text-decoration: underline;
+}
+
+.buttonsHeader {
+    display: flex; /* Ativa o flexbox */
+    justify-content: space-between; /* Coloca os botões nas extremidades */
+    align-items: center; /* Alinha verticalmente */
+    width: 100%; /* Garante que o contêiner ocupe toda a largura disponível */
+    padding: 10px; /* Adiciona um espaçamento interno */
+    box-sizing: border-box; /* Inclui padding no cálculo da largura */
+}
+
+
+
+/* Responsividade para o footer */
+@media (max-width: 576px) {
+    .footer {
+        padding: 5px;
+    }
+
+    .footer .social-links {
+        margin-top: 50px;
+    }
+
+    .footer .social-links a {
+        margin: 0 5px;
+    }
+}

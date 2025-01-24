@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/cob_imediata.css') }}">
+    {% include "model-header.html" %}
+</head>
+<body>
+    <div class="container">
+        <h1>API - Cobrança Imediata</h1>
+        <p>Escolha um método para testar</p>
+
+        <!-- Botões para colapsar os formulários -->
+        <div class="buttons">
+            <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#cobImediataFormPost" aria-expanded="false" aria-controls="cobImediataFormPost">POST</button>
+            <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#cobImediataFormPut" aria-expanded="false" aria-controls="cobImediataFormPut">PUT</button>
+            <button class="btn btn-success" type="button" data-bs-toggle="collapse" data-bs-target="#cobImediataFormGet" aria-expanded="false" aria-controls="cobImediataFormGet">GET</button>
+            <button class="btn" style="background-color: #6f42c1; color: white;" type="button" data-bs-toggle="collapse" data-bs-target="#cobImediataFormPatch" aria-expanded="false" aria-controls="cobImediataFormPatch">PATCH</button>
+            <button class="btn btn-success" type="button" data-bs-toggle="collapse" data-bs-target="#cobImediataFormGetId" aria-expanded="false" aria-controls="cobImediataFormGetId">GET-ID</button>
+        </div>
+
+        <div class="collapse" id="cobImediataFormPost">
+            <div class="card card-body mt-3">
+                <h2><button class="btn btn-outline-warning btn-lg w-10 text-start" disabled>POST</button>
+                        <strong>/v2/cob</strong>
+                    <br>
+                        <br>Preencha os campos para criar uma cobrança imediata (sem txid)</h2>
+
+                <!-- Formulário de Cobrança Imediata -->
+                <form id="cobForm" method="POST" action="{{ url_for('cob_imediata.cob_imediata_post') }}">
+
+                    <label for="calendario"><strong>Calendário (Expiração):</strong></label>
+                    <input type="number" id="calendario" name="calendario[expiracao]" placeholder="3600" required>
+                
+                    <label for="devedor"><strong>CPF do Devedor:</strong></label>
+                    <input type="text" id="devedor_cpf" name="devedor[cpf]" placeholder="000.000.000.00" required>
+                
+                    <label for="devedor_nome"><strong>Nome do Devedor:</strong></label>
+                    <input type="text" id="devedor_nome" name="devedor[nome]" placeholder="" required>
+                
+                    <label for="valor"><strong>Valor Original:</strong></label>
+                    <input type="text" id="valor" name="valor[original]" placeholder="Valor deve seguir este formato 0.00" required>
+                
+                    <label for="chave"><strong>Chave do Pagador:</strong></label>
+                    <input type="text" id="chave" name="chave" placeholder="CPF/Telefone/E-mail/Chave Aleatória" required>
+                
+                    <label for="solicitacaoPagador"><strong>Solicitação do Pagador:</strong></label>
+                    <input type="text" id="solicitacaoPagador" name="solicitacaoPagador" placeholder="Informe o número ou identificador do pedido." required>
+                
+                    <button type="submit" class="btn btn-primary mt-3">Enviar</button>
+                
+                </form>
+                    <h2>Exemplo de Payload</h2>
+                        <pre>
+                            {
+                            "calendario": {
+                                "expiracao": 3600
+                            },
+                            "devedor": {
+                                "cpf": "12345678909",
+                                "nome": "Francisco da Silva"
+                            },
+                            "valor": {
+                                "original": "140.45"
+                            },
+                            "chave": "44922633812",
+                            "solicitacaoPagador": "Informe o número ou identificador do pedido."
+                            }
+                        </pre>
+            </div>
+        </div>
+
+        <div class="collapse" id="cobImediataFormPatch">
+            <div class="card card-body mt-3">
+                <h2><button class="btn btn-outline" style="border: 2px solid #6f42c1; color: #6f42c1; background-color: transparent;" disabled>PATCH</button>
+                        <strong>/v2/cob/txid</strong>
+                    <br>
+                        <br>Preencha os campos para revisar uma cobrança</h2>
+
+                <!-- Formulário de Cobrança Imediata -->
+                <form id="cobForm" action="{{ url_for('cob_imediata_tp.process_patch') }}" method="POST">
+                    <input type="hidden" name="_method" value="PATCH">
+                    
+                    <label for="txid"><strong>TxId:</strong></label>
+                    <input type="text" id="txid" name="txid" required>
+                
+                    <label for="chave"><strong>Chave PIX:</strong></label>
+                    <input type="text" id="chave" name="chave" required>
+                
+                    <label for="nome"><strong>Nome do Devedor:</strong></label>
+                    <input type="text" id="nome" name="devedor[nome]" required>
+                
+                    <label for="cpf"><strong>CPF do Devedor:</strong></label>
+                    <input type="text" id="cpf" name="devedor[cpf]" required>
+                
+                    <label for="valor"><strong>Valor:</strong></label>
+                    <input type="text" id="valor" name="valor[original]" placeholder="Ex: 350.00" required>
+                
+                    <label for="expiracao"><strong>Expiração (em segundos):</strong></label>
+                    <input type="number" id="expiracao" name="calendario[expiracao]" value="600" required>
+                
+                    <label for="solicitacaoPagador"><strong>Solicitação do Pagador:</strong></label>
+                    <input type="text" id="solicitacaoPagador" name="solicitacaoPagador" required>
+                
+                    <button type="submit" class="btn btn-primary mt-3">Enviar</button>
+                </form><br>
+                    <h2>Exemplo de Payload</h2>
+                        <pre>
+                            {
+                                "devedor": {
+                                  "logradouro": "Alameda Souza, Numero 80, Bairro Braz",
+                                  "cidade": "Recife",
+                                  "uf": "PE",
+                                  "cep": "70011750",
+                                  "cpf": "12345678909",
+                                  "nome": "Francisco da Silva"
+                                },
+                                "valor": {
+                                  "original": "123.45"
+                                },
+                                "solicitacaoPagador": "Cobrança dos serviços prestados."
+                              }
+                        </pre>
+                    </div>
+                </div>
+
+        <div class="collapse" id="cobImediataFormPut">
+            <div class="card card-body mt-3">
+                <h2><button class="btn btn-outline-primary btn-lg w-10 text-start" disabled>PUT</button>
+                    <strong>/v2/cob/txid</strong>
+                    <br>
+                        <br>Preencha os campos para criar uma cobrança imediata (com txid)</h2>
+
+                <!-- Formulário de Cobrança Imediata -->
+                <form id="cobForm" action="{{ url_for('cob_imediata_tp.process_txid_put') }}" method="POST">
+                    <label for="txid"><strong>TxId:</strong></label>
+                    <input type="text" id="txid" name="txid" placeholder="" required>
+
+                    <label for="calendario"><strong>Calendário (Expiração):</strong></label>
+                    <input type="number" id="calendario" name="calendario[expiracao]" placeholder="3600" required>
+
+                    <label for="devedor"><strong>CPF do Devedor:</strong></label>
+                    <input type="text" id="devedor_cpf" name="devedor[cpf]" placeholder="000.000.000.00" required>
+
+                    <label for="devedor_nome"><strong>Nome do Devedor:</strong></label>
+                    <input type="text" id="devedor_nome" name="devedor[nome]" placeholder="" required>
+
+                    <label for="valor"><strong>Valor Original:</strong></label>
+                    <input type="text" id="valor" name="valor[original]" placeholder="Valor deve seguir este formato 0.00" required>
+
+                    <label for="chave"><strong>Chave do Pagador:</strong></label>
+                    <input type="text" id="chave" name="chave" placeholder="CPF/Telefone/E-mail/Chave Aleatória" required>
+
+                    <label for="solicitacaoPagador"><strong>Solicitação do Pagador:</strong></label>
+                    <input type="text" id="solicitacaoPagador" name="solicitacaoPagador" placeholder="Informe o número ou identificador do pedido." required>
+
+                    <button type="submit" class="btn btn-primary mt-3">Enviar</button>
+                </form><br>
+                <h2>Exemplo de Payload</h2>
+                    <pre>
+                        {
+                        "calendario": {
+                            "expiracao": 3600
+                        },
+                        "devedor": {
+                            "cpf": "12345678909",
+                            "nome": "Francisco da Silva"
+                        },
+                        "valor": {
+                            "original": "140.45"
+                        },
+                        "chave": "44922633812",
+                        "solicitacaoPagador": "Informe o número ou identificador do pedido."
+                        }
+                    </pre>
+            </div>
+        </div>
+
+        <div class="collapse" id="cobImediataFormGet">
+            <div class="card card-body mt-3">
+                <h2><button class="btn btn-outline-success btn-lg w-10 text-start" disabled>GET</button>
+                    <strong>/v2/cob</strong>
+                    <br>
+                        <br>Preencha os campos para consultar uma cobrança imediata </h2>
+
+                <!-- Formulário de Cobrança Imediata -->
+                <form id="cobForm" action="{{ url_for('cob_imediata.cob_imediata_get') }}" method="GET">
+                    <label for="dataInicio"><strong>Data Início:</strong></label>
+                    <input type="date" id="dataInicio" name="inicio" placeholder="Data deverá ter esse formato: (AA/MM/DD) 2025-01-01" required>
+
+                    <label for="dataFim"><strong>Data Fim:</strong></label>
+                    <input type="date" id="dataFim" name="fim" placeholder="Data deverá ter esse formato: (AA/MM/DD) 2025-01-01" required>
+
+
+                    <button type="submit" class="btn btn-primary mt-3">Enviar</button><br>
+                </form>
+            </div>
+        </div>
+
+        <div class="collapse" id="cobImediataFormGetId">
+            <div class="card card-body mt-3">
+                <h2><button class="btn btn-outline-success btn-lg w-10 text-start" disabled>GET-ID</button>
+                    <strong>/v2/cob/txid</strong>
+                    <br>
+                        <br>Preencha os campos para consultar uma cobrança imediata com TxId</h2>
+
+                <!-- Formulário de Cobrança Imediata -->
+                <form id="cobForm" action="{{ url_for('cob_imediata_tp.process_txid') }}" method="POST">
+                    <label for="txid"><strong>TxId:</strong></label>
+                    <input type="text" id="txid" name="txid" placeholder="" required>
+
+                    <button type="submit" class="btn btn-primary mt-3">Enviar</button><br>
+                </form>
+            </div>
+        </div>
+    </div>
+            <br>
+                <br>
+                    <br>
+                        <br>
+                            <br>
+                                <br>
+
+    {% include "model-footer.html" %}
+    
+</body>
+</html>

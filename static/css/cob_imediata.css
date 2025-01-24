@@ -1,0 +1,59 @@
+/* Adiciona um espaçamento superior ao conteúdo */
+body > .container {
+    margin-top: 100px;
+}
+
+/* Estilo da container principal */
+.container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); /* Aumentando a sombra */
+    width: 90%;
+    max-width: 600px;
+}
+
+h1 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    color: #343a40;
+}
+
+label {
+    display: block;
+    margin-top: 10px;
+    color: #495057;
+}
+
+input, textarea {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+    background-color: #f8f9fa;
+    margin-top: 5px;
+    margin-bottom: 15px;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #6f42c1; /* Botão roxo */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #5a379f;
+}
+
+pre {
+    background-color: #e9ecef;
+    padding: 5px;
+    border-radius: 5px;
+    overflow-x: auto;
+    color: #495057;
+}

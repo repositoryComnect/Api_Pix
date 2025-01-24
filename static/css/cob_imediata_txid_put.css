@@ -1,0 +1,90 @@
+        /* Estilo do cabeçalho */
+        .card-header {
+            background-color: #007bff;
+            color: white;
+            border-radius: 10px 10px 0 0;
+            padding: 20px;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        /* Estilo das mensagens de sucesso e erro */
+        .alert {
+            font-size: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .alert-success {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .alert-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        /* Estilo do corpo do cartão */
+        .card-body {
+            background-color: #f8f9fa;
+            border-radius: 0 0 10px 10px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Estilo das listas de itens */
+        .list-group-item {
+            padding: 15px;
+            font-size: 1.1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            background-color: white;
+            transition: background-color 0.3s ease;
+        }
+
+        .list-group-item:hover {
+            background-color: #f1f1f1;
+        }
+
+        .list-group-item strong {
+            color: #007bff;
+        }
+
+        /* Link para localização */
+        .list-group-item a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .list-group-item a:hover {
+            text-decoration: underline;
+        }
+
+        /* Estilo para o código Pix Copia e Cola */
+        .list-group-item code {
+            display: block;
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 1rem;
+            color: #343a40;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        /* Estilo do container */
+        .container {
+            max-width: 800px;
+            margin-top: 50px;
+        }
+        
+        /* Adicionando um efeito de hover para o card */
+        .card:hover {
+            transform: scale(1.02);
+            transition: transform 0.3s ease;
+        }

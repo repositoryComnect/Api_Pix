@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    {% include "model-header.html" %}
+    <link rel="stylesheet" href="{{url_for('static', filename='css/cob_imediata_get.css') }}">
+</head>
+<body>
+    <h2>Consulta de Cobranças</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Data de Criação</th>
+                <th>Expiração</th>
+                <th>Chave</th>
+                <th>CPF do Devedor</th>
+                <th>Nome do Devedor</th>
+                <th>Revisão</th>
+                <th>Solicitação do Pagador</th>
+                <th>Status</th>
+                <th>TXID</th>
+                <th>Valor</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cob in cobs %}
+            <tr>
+                <td>{{ cob.calendario.criacao }}</td>
+                <td>{{ cob.calendario.expiracao }}</td>
+                <td>{{ cob.chave }}</td>
+                <td>{{ cob.devedor.cpf }}</td>
+                <td>{{ cob.devedor.nome }}</td>
+                <td>{{ cob.revisao }}</td>
+                <td>{{ cob.solicitacaoPagador }}</td>
+                <td>{{ cob.status }}</td>
+                <td>{{ cob.txid }}</td>
+                <td>{{ cob.valor.original }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <div class="relatorio">
+        <button class="btn btn-primary">Exportar</button>
+    </div>
+    <br>
+                <br>
+                    <br>
+                        <br>
+                            <br>
+                                <br>
+
+    {% include "model-footer.html" %}
+</body>
+</html>

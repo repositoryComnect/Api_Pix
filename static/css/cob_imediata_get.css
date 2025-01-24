@@ -1,0 +1,35 @@
+/* Estilo do cabeçalho */
+h2 {
+    color: #007bff; /* Azul claro */
+}
+
+/* Estilo da tabela */
+table {
+    width: 80%;
+    border-collapse: collapse;
+    margin: 20px auto; /* Centraliza a tabela */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra para profundidade */
+    border-radius: 10px; /* Bordas arredondadas */
+    overflow: hidden; /* Garante que o conteúdo não ultrapasse as bordas arredondadas */
+}
+
+th, td {
+    padding: 12px 15px;
+    text-align: center;
+    border-bottom: 1px solid #ddd; /* Linha de separação */
+}
+
+th {
+    background-color: #f2f2f2;
+    color: #333;
+    font-weight: bold;
+}
+
+tr:hover {
+    background-color: #f1f1f1; /* Cor de fundo ao passar o mouse */
+}
+
+.relatorio{
+    width: 80%;
+}
+
