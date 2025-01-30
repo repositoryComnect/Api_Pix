@@ -12,17 +12,16 @@
           <p><strong>Valor:</strong> R$ {{ pix.valor.original }}</p>
           <p><strong>Status:</strong> {{ pix.status }}</p>
           <p><strong>Código Pix (Copia e Cola):</strong></p>
+          <p><strong>ID:</strong> {{ loc_id }}</p> <!-- Exibindo o loc_id -->
           <textarea rows="5" cols="60" readonly>{{ pix.pixCopiaECola }}</textarea>
         <br><br>
     </div><br><br>
 
-    <!-- pix.html -->
     <h2>QR Code</h2>
       <div class="borde_qrcode">
       <img src="{{ qr_code_url }}" alt="QR Code do PIX" style="width:300px;height:300px;">
       </div>
 
-      {% include "model-footer.html" %}
-
+    {% include "model-footer.html" %}
 </body>
 </html>

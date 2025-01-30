@@ -16,27 +16,31 @@
         function home() {
           location.reload();
         }
-      </script>
+    </script>
 </head>
 
 <body class="index-page">
-        <div class="container-fluid container-xl position-relative d-flex align-items-center">
-            <a href="" class="logo d-flex align-items-center me-auto">
-                <img src="{{ url_for('static', filename='img/icon.png') }}" alt="" onclick="home()">
-            </a>
-            <nav id="navmenu" class="navmenu">
-                <ul>
-                    <li><a href="" class="active">Início<br></a></li>
-                    <li><a href="http://www.comnect.com.br/empresa.html">Sobre</a></li>
-                    <li> <strong style="color: rgb(82, 157, 255)">{{ username }}</strong></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
+    <div class="container-fluid container-xl position-relative d-flex align-items-center">
+        <a href="" class="logo d-flex align-items-center me-auto">
+            <img src="{{ url_for('static', filename='img/icon.png') }}" alt="" onclick="home()">
+        </a>
+        <nav id="navmenu" class="navmenu">
+            <ul>
+                <li><a href="" class="active">Início<br></a></li>
+                <li><a href="http://www.comnect.com.br/empresa.html">Sobre</a></li>
+
+                {% if session.get('username') %}
+                <li><strong style="color: rgb(82, 157, 255)">{{ session['username'] }}</strong></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
 
     <div class="buttonsHeader">
-        <button onclick="voltar()" class= "btn btn-primary" type="button">Voltar</button>
-        <button class="btn btn-primary" type="button">Sair</button>
+        <button onclick="voltar()" class="btn btn-primary" type="button">Voltar</button>
 
+        <form action="/logout" method="POST" style="display:inline;">
+            <button type="submit" class="btn btn-primary">Sair</button>
+        </form>
     </div>
 </body>

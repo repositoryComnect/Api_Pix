@@ -6,8 +6,8 @@
 </head>
 <body>
     <div class="container">
-        <h1>API - Cobrança Imediata</h1>
-        <p>Escolha um método para testar</p>
+        <h1>Cobrança Imediata</h1>
+        <p>Escolha um método </p>
 
         <!-- Botões para colapsar os formulários -->
         <div class="buttons">
@@ -26,7 +26,7 @@
                         <br>Preencha os campos para criar uma cobrança imediata (sem txid)</h2>
 
                 <!-- Formulário de Cobrança Imediata -->
-                <form id="cobForm" method="POST" action="{{ url_for('cob_imediata.cob_imediata_post') }}">
+                <form id="cobForm" method="POST" action="{{ url_for('cob_imediata_tp.cob_imediata_post') }}">
 
                     <label for="calendario"><strong>Calendário (Expiração):</strong></label>
                     <input type="number" id="calendario" name="calendario[expiracao]" placeholder="3600" required>
@@ -183,7 +183,7 @@
                         <br>Preencha os campos para consultar uma cobrança imediata </h2>
 
                 <!-- Formulário de Cobrança Imediata -->
-                <form id="cobForm" action="{{ url_for('cob_imediata.cob_imediata_get') }}" method="GET">
+                <form id="cobForm" action="{{ url_for('cob_imediata_tp.get_cobrancas') }}" method="POST">
                     <label for="dataInicio"><strong>Data Início:</strong></label>
                     <input type="date" id="dataInicio" name="inicio" placeholder="Data deverá ter esse formato: (AA/MM/DD) 2025-01-01" required>
 

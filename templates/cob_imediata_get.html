@@ -39,9 +39,15 @@
         </tbody>
     </table>
     
+    {% if period %}
+    <form action="{{ url_for('cob_imediata_ut.exportar') }}" method="GET">
     <div class="relatorio">
+        <input type="hidden" name="inicio" value="{{ period.inicio }}">
+        <input type="hidden" name="fim" value="{{ period.fim }}">
+    {% endif %}
         <button class="btn btn-primary">Exportar</button>
     </div>
+        </form>
     <br>
                 <br>
                     <br>
