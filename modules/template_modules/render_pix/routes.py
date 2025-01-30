@@ -18,6 +18,9 @@ def gerar_pix():
         # Decodificar JSON da URL
         pix_details = json.loads(unquote(pix_details_json))
 
+        # Extrair o loc_id
+        loc_id = pix_details.get("loc_id")  # Aqui você pega o loc_id
+
         # Gerar QR Code
         pix_copia_e_cola = pix_details.get("pixCopiaECola")
         if not pix_copia_e_cola:
@@ -31,8 +34,9 @@ def gerar_pix():
         qr.save(buffer, format="PNG")
         buffer.seek(0)
 
-        # Renderizar o template com os dados
-        return render_template("pix.html", pix=pix_details, qr_code_url="/qr_code_image?pix_details=" + unquote(pix_details_json))
+        # Renderizar o template com os dados, incluindo o loc_id
+        return render_template("pix.html", pix=pix_details, loc_id=loc_id, qr_code_url="/qr_code_image?pix_details=" + unquote(pix_details_json))
+
     except Exception as e:
         print(f"Erro ao processar pix_details: {e}")
         return jsonify({'error': f'Erro ao processar pix_details: {e}'}), 500

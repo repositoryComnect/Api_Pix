@@ -1,15 +1,11 @@
-from flask import Blueprint, jsonify, request, redirect, url_for, json, session
+from flask import Blueprint, jsonify, request, redirect, url_for, json
 import cob_imediata.utils_cob as utils_cob, settings.error_messages as error_messages
 from urllib.parse import quote
-import re
-from datetime import datetime
-
 
 cob_imediata_bp = Blueprint('cob_imediata', __name__)
 
-## ------------------------------------------- Bloco Rotas Cobrança Imediata --------------------------------------------------------------------------------------- ##
+## ------------------------------------------- Bloco Rotas Cobrança Imediata Postman--------------------------------------------------------------------------------------- ##
 
-# Criar cobrança imediata (sem txid)
 @cob_imediata_bp.route('/v2/cob', methods=['POST'])
 def cob_imediata_post():
     if request.is_json:
@@ -23,75 +19,14 @@ def cob_imediata_post():
 
         if not calendario or not valor or not chave:
             return jsonify({'error': error_messages.ERROR_FIELD_MANDATORY}), 400
-    else:
-        try:
-            # Validando e processando o payload do formulário
-            valor_original = request.form.get("valor[original]", "")
-            if not valor_original:
-                raise ValueError("Campo 'valor[original]' é obrigatório.")
-
-            # Validando o formato do valor (regex)
-            if not re.match(r"^[0-9]{1,10}\.[0-9]{2}$", valor_original):
-                raise ValueError(
-                    "Campo 'valor[original]' deve estar no formato '0.00' com até 10 dígitos antes do ponto."
-                )
-            data = {
-                "calendario": {
-                    "expiracao": int(request.form.get("calendario[expiracao]", 3600))
-                },
-                "devedor": {
-                    "cpf": request.form.get("devedor[cpf]", ""),
-                    "nome": request.form.get("devedor[nome]", "")
-                },
-                "valor": {
-                    "original": valor_original
-                },
-                "chave": request.form.get("chave", ""),
-                "solicitacaoPagador": request.form.get("solicitacaoPagador", "")
-            }
-        except ValueError as ve:
-            return jsonify({"error": str(ve)}), 400
-
-    try:
+    
         response = utils_cob.CobImediataPost(data)
 
-        if isinstance(response, tuple):
-            return response
-
-        if response.status_code == 201:
-            response_data = response.json()
-
-            # Campos da resposta
-            pix_details = {
-                "calendario": response_data.get("calendario"),
-                "devedor": response_data.get("devedor"),
-                "valor": response_data.get("valor"),
-                "chave": response_data.get("chave"),
-                "pixCopiaECola": response_data.get("pixCopiaECola"),
-                "status": response_data.get("status"),
-            }
-
-            print(pix_details)
-
-            # Codificar pix_details em JSON e então codificar para URL
-            encoded_pix_details = quote(json.dumps(pix_details))
-
-            # Redirecionar para gerar o Pix
-            return redirect(url_for('routes.gerar_pix', pix_details=encoded_pix_details))
-            #return jsonify(response.json()), response.status_code Linha para depuração
-
-        return jsonify({
-            'error': error_messages.ERROR_INVALID_REQUEST,
-            'details': response.json()
-        }), response.status_code
-
-    except Exception as e:
-        return jsonify({'error': error_messages.ERROR_INVALID_REQUEST + str(e)}), 500
+        return jsonify(response.json()), response.status_code
 
 
 
 
-    
 # Consultar lista de cobranças
 @cob_imediata_bp.route('/v2/cob', methods=['GET'])
 def cob_imediata_get():
@@ -103,22 +38,10 @@ def cob_imediata_get():
     if not inicio or not fim:
         return jsonify({'error': error_messages.ERROR_MISSING_PARAMETERS}), 400
     else:
-        try:
-            # Tenta converter as datas no formato 'YYYY-MM-DD'
-            inicio_formatado = datetime.strptime(inicio, '%Y-%m-%d').strftime('%Y-%m-%dT%H:%M:%SZ')
-            fim_formatado = datetime.strptime(fim, '%Y-%m-%d').strftime('%Y-%m-%dT%H:%M:%SZ')
-        except ValueError:
-            try:
-                # Se falhar, tenta converter as datas no formato 'YYYY-MM-DDTHH:MM:SSZ'
-                inicio_formatado = datetime.strptime(inicio, '%Y-%m-%dT%H:%M:%SZ').strftime('%Y-%m-%dT%H:%M:%SZ')
-                fim_formatado = datetime.strptime(fim, '%Y-%m-%dT%H:%M:%SZ').strftime('%Y-%m-%dT%H:%M:%SZ')
-            except ValueError:
-                return jsonify({'error': 'Formato de data inválido'}), 400
-
-        response = utils_cob.CobImediataGet(inicio_formatado, fim_formatado)
+        response = utils_cob.CobImediataGet(inicio, fim)
 
     # Redireciona para a rota get_cobrancas com os dados como parâmetros de consulta
-    return redirect(url_for('cob_imediata_tp.get_cobrancas', cobs=json.dumps(response.json()['cobs'])))
+    return jsonify(response.json()), response.status_code
 
 
 
@@ -189,7 +112,7 @@ def cob_imediata_txid_put(txid):
             response = utils_cob.CobImediataTxidPut(txid, data)
             return jsonify(response.json()), response.status_code
     else:
-        return jsonify({'error': 'O payload não está com o formato de acordo'})
+        return jsonify({'error': error_messages.ERROR_FORMATED_PAYLOAD}), 400
 
 
 

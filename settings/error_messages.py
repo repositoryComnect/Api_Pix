@@ -15,6 +15,7 @@ ERROR_PARAMETER_E2EID = 'Parâmetro "E2EID" não foi fornecido'
 ERROR_PARAMETERS = 'Os parâmetros necessários não foram fornecidos'
 ERROR_NUMERIC_ID = 'O parâmetro "ID" deve ser numérico'
 ERROR_JSON_INVALIDO = 'A resposta da API externa não contém um JSON válido.'
+ERROR_FORMATED_PAYLOAD = 'O payload não está com o formato de acordo'
 
 
 
