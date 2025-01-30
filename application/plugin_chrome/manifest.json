@@ -1,0 +1,24 @@
+{
+    "manifest_version": 3,
+    "name": "Gerador de PIX",
+    "version": "1.0",
+    "description": "Plugin para gerar PIX e consultar cobranças.",
+    "permissions": [
+      "activeTab",
+      "storage"
+    ],
+    "background": {
+      "service_worker": "background.js"
+    },
+    "action": {
+      "default_popup": "popup.html",
+      "default_icon": {
+        "16": "icon.png",
+        "48": "icon.png",
+        "128": "icon.png"
+      }
+    },
+    "host_permissions": [
+      "http://127.0.0.1:5000/*"
+    ]
+  }

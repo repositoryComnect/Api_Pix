@@ -1,0 +1,72 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    width: 50%; /* Garante que o body ocupe toda a largura */
+    height: 50%; /* Garante que o body ocupe toda a altura */
+}
+
+/* Formulário do QRCode */
+#qrcode-form {
+    width: 80%; /* O formulário ocupa 80% da largura da tela */
+    max-width: 800px; /* Largura máxima de 800px */
+    min-width: 400px; /* Garante que o formulário não fique estreito em telas pequenas */
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+    height: auto;
+}
+
+h1 {
+    text-align: center; /* Centraliza o título */
+    margin-bottom: 20px; /* Espaço abaixo do título */
+    width: 100%; /* Garante que o h1 ocupe toda a largura da tela */
+}
+
+label {
+    font-weight: bold;
+    margin-top: 10px;
+    display: block;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+button {
+    width: 50%;
+    padding: 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+#result {
+    margin-top: 30px;
+    text-align: center;
+}
+
+/* Responsividade para telas pequenas */
+@media (max-width: 768px) {
+    #qrcode-form {
+        width: 95%; /* O formulário ocupa 95% da largura da tela em telas pequenas */
+    }
+}
