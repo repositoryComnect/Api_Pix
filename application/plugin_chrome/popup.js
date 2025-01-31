@@ -34,22 +34,21 @@ document.addEventListener("DOMContentLoaded", function() {
             };
 
             try {
-                const response = await fetch("http://127.0.0.1:5000/v2/cob", {
+                const response = await fetch("https://efi.comnectlupa.com.br:5000/cob_imediata_plugin", {  // Chama o endpoint correto do Flask
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(data)
                 });
 
                 const result = await response.json();
                 console.log("Resultado da resposta do servidor:", result);
 
-                if (response.ok && result.pixCopiaECola) {
-                    // Aqui estamos usando a URL do QR Code retornada diretamente
+                if (response.ok) {
                     document.getElementById("result").innerHTML = `
                         <h3>QR Code Gerado:</h3>
-                        <img src="https://${result.pixCopiaECola}" alt="QRCode"/>
+                        <p><b>PIX Copia e Cola:</b> ${result.pixCopiaECola}</p>
+                        <p><b>Link de Visualização:</b> <a href="${result.linkVisualizacao}" target="_blank">${result.linkVisualizacao}</a></p>
+                        <img src="${result.qrcodeImagem}" alt="QRCode"/>
                     `;
                 } else {
                     document.getElementById("result").innerHTML = `
@@ -57,7 +56,6 @@ document.addEventListener("DOMContentLoaded", function() {
                         <p>${result.error || 'Erro desconhecido'}</p>
                     `;
                 }
-
             } catch (error) {
                 console.error("Erro ao se comunicar com o servidor:", error);
                 document.getElementById("result").innerHTML = `
