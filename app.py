@@ -1,6 +1,4 @@
-import sys
-import os
-import logging
+import logging, requests, os, sys
 
 # Adiciona a pasta "modules" ao caminho de busca do Python
 sys.path.append(os.path.join(os.path.dirname(__file__), 'modules'))
@@ -16,8 +14,9 @@ from modules.envio_pagamento_pix.routes import env_pagamento_pix_bp
 from modules.template_modules.render_pix.routes import routes_pix_bp
 from modules.template_modules.render_cob_imediata.routes import cob_imediata_tp
 from modules.template_modules.render_cob_imediata.utils import cob_imediata_ut
+from modules.cob_imediata_plugin.routes import cob_imediata_pg
 from authenticate.login.routes import login_bp
-from modules.webhook.routes import webhook_bp
+from modules.webhook.routes import webhook_wh
 from settings.extensions import db, bcrypt, login_manager
 from settings.credentials import Config
 from flask_admin import Admin
@@ -28,6 +27,7 @@ from flask_migrate import Migrate
 from flask_cors import CORS
 
 # ---------------------------------------------------------------------------------------- Configuração Logs --------------------------------------------------------------------------------------------------------------------#
+# Criar diretório de logs se não existir
 log_directory = "logs"
 if not os.path.exists(log_directory):
     os.makedirs(log_directory)
@@ -36,30 +36,25 @@ if not os.path.exists(log_directory):
 log_file = os.path.join(log_directory, "app.log")
 
 # Configuração básica de logging
-logging.basicConfig(level=logging.DEBUG,  # Nível mínimo de log (INFO)
-                    format='%(asctime)s - %(levelname)s - %(message)s')  # Formato do log
+logging.basicConfig(
+    level=logging.DEBUG,  # Captura todos os logs a partir do nível DEBUG
+    format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
+    handlers=[
+        logging.FileHandler(log_file, encoding="utf-8"),  # Salva os logs no arquivo
+        logging.StreamHandler(sys.stdout)  # Exibe logs no terminal
+    ],
+)
 
-# Criação de um logger
+# Criar um logger específico para a aplicação
 logger = logging.getLogger(__name__)
 
-# Criação do FileHandler para escrever os logs no arquivo
-file_handler = logging.FileHandler(log_file)
-file_handler.setLevel(logging.DEBUG)  # Defina o nível do arquivo para INFO
-file_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+# Habilitar logs detalhados de requisições HTTP (requests e urllib3)
+logging.getLogger("urllib3").setLevel(logging.DEBUG)
+logging.getLogger("requests").setLevel(logging.DEBUG)
 
-# Adiciona o FileHandler ao logger
-logger.addHandler(file_handler)
+# Para capturar todas as requisições HTTP no Flask
+logging.getLogger("werkzeug").setLevel(logging.DEBUG)
 
-# Criação do StreamHandler para exibir logs no console
-stream_handler = logging.StreamHandler(sys.stdout)
-stream_handler.setLevel(logging.DEBUG)  # Defina o nível de exibição no console
-stream_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
-
-# Adiciona o StreamHandler ao logger
-logger.addHandler(stream_handler)
-
-# Teste de logging
-logger.info("Sistema iniciado com sucesso.")
 
 # ---------------------------------------------------------------------------------------- Flask ---------------------------------------------------------------------------------------------------------------------------------#
 
@@ -77,10 +72,10 @@ app.register_blueprint(cob_lote_bp)  # Cobrança em lote
 app.register_blueprint(env_pagamento_pix_bp)  # Envio e pagamento PIX
 app.register_blueprint(routes_pix_bp)  # Template para cobranças PIX
 app.register_blueprint(cob_imediata_tp)  # Template de cobrança imediata
-app.register_blueprint(webhook_bp)  # Webhook
+app.register_blueprint(webhook_wh)  # Webhook
 app.register_blueprint(login_bp)  # Login
 app.register_blueprint(cob_imediata_ut) # Utilidades cobrança imediata para poder realizar a exportação de dados CSV
-#app.register_blueprint(cob_imediata_pg) # Rota para cobrança via plugin
+app.register_blueprint(cob_imediata_pg) # Rota cobrança imediata plugin chrome
 
 # ---------------------------------------------------------------------------------- Configurações Gerais -----------------------------------------------------------------------------------------------------------------------#
 app.config.from_object(Config)

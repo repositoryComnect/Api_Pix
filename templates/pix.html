@@ -3,24 +3,25 @@
 <head>
     {% include "model-header.html" %}
 </head>
- 
+
 <body>
     <div class="form">
-      <h1>Detalhes do Pagamento PIX</h1>
-          <p><strong>Nome:</strong> {{ pix.devedor.nome }}</p>
-          <p><strong>CPF:</strong> {{ pix.devedor.cpf }}</p>
-          <p><strong>Valor:</strong> R$ {{ pix.valor.original }}</p>
-          <p><strong>Status:</strong> {{ pix.status }}</p>
-          <p><strong>Código Pix (Copia e Cola):</strong></p>
-          <p><strong>ID:</strong> {{ loc_id }}</p> <!-- Exibindo o loc_id -->
-          <textarea rows="5" cols="60" readonly>{{ pix.pixCopiaECola }}</textarea>
-        <br><br>
+        <h1>Detalhes do Pagamento PIX</h1>
+        <p><strong>Nome:</strong> {{ pix.devedor.nome }}</p>
+        <p><strong>CPF:</strong> {{ pix.devedor.cpf }}</p>
+        <p><strong>Valor:</strong> R$ {{ pix.valor.original }}</p>
+        <p><strong>Status:</strong> {{ pix.status }}</p>
+        <p><strong>ID:</strong> {{ loc_id }}</p> <!-- Exibindo o loc_id -->
+        <p><strong>Link Cobrança:</strong> {{ link_visualizacao }}</p> <!-- Link para visualização -->
+        <p><strong>Código Pix (Copia e Cola):</strong></p>
+        <textarea rows="5" cols="60" readonly>{{ pix.pixCopiaECola }}</textarea>
     </div><br><br>
 
     <h2>QR Code</h2>
-      <div class="borde_qrcode">
-      <img src="{{ qr_code_url }}" alt="QR Code do PIX" style="width:300px;height:300px;">
-      </div>
+    <div class="borde_qrcode">
+        <!-- Exibindo a imagem do QR Code recebida da resposta -->
+        <img src="{{ qr_code_image }}" alt="QR Code do PIX" style="width:300px;height:300px;">
+    </div>
 
     {% include "model-footer.html" %}
 </body>
