@@ -1,6 +1,7 @@
-from flask import Blueprint, jsonify, request, redirect, url_for, json
-import cob_imediata.utils_cob as utils_cob, settings.error_messages as error_messages
+from flask import Blueprint, jsonify, request, redirect, url_for, json, render_template
+import cob_imediata.utils_cob as utils_cob, settings.error_messages as error_messages, requests
 from urllib.parse import quote
+import pay_location.utils_plocation as utils_plocation
 
 cob_imediata_bp = Blueprint('cob_imediata', __name__)
 
@@ -59,8 +60,8 @@ def cob_imediata_txid_get(txid):
         # Código a ser executado se a condição for verdadeira
         response = utils_cob.CobImediataTxidGet(txid)
 
-    #Validar a partir daqui
-    if response.status_code == 200:
+        # Verifica se a resposta da API foi bem-sucedida
+        if response.status_code == 200:
             response_data = response.json()
 
             # Campos da resposta
@@ -76,17 +77,37 @@ def cob_imediata_txid_get(txid):
                 "solicitacaoPagador": response_data.get("solicitacaoPagador"),
                 "txid": response_data.get("txid"),
                 "status": response_data.get("status"),
-        }
+            }
+            loc_id = response_data.get("loc", {}).get("id")
 
-            # Codificar pix_details em JSON e então codificar para URL
-            encoded_pix_details = quote(json.dumps(pix_details))
+            # Verifica se o loc_id existe antes de fazer a requisição externa
+            if loc_id:
+                #external_url = f"https://efi.comnectlupa.com.br:5000/v2/loc/{loc_id}/qrcode"  # URL completa
+                #external_response = requests.get(external_url)
+                response = utils_plocation.PayLocationTxidQrcodeGet(loc_id)
+                if response.status_code == 200:
+                    external_data = response.json()
 
-            # Redirecionar para gerar o Pix
-            return redirect(url_for('routes.qr_code_image_txid', pix_details=encoded_pix_details)) 
-    else:
-        return jsonify({'error': error_messages.ERROR_LENGTH_PARAMETER}), 400 
+                #if external_response.status_code == 200:
+                #    external_data = external_response.json()
 
-    #return jsonify(response.json()), response.status_code
+                    # Passando a imagem do QR Code também
+                    imagem_qrcode = external_data.get("imagemQrcode")  # Supondo que o campo correto seja esse
+
+                    # Passando todos os dados para o frontend
+                    return render_template("cob_imediata_get_txid.html", 
+                                           pix=pix_details, 
+                                           loc_id=loc_id, 
+                                           link_visualizacao=external_data.get("linkVisualizacao", "Link não disponível"),
+                                           qr_code_image=imagem_qrcode)  # Passando a imagem do QR Code
+            else:
+                return jsonify({'error': 'Falha ao chamar o endpoint externo', 'details': external_data.json()}), external_data.status_code
+
+        return jsonify({
+            'error': error_messages.ERROR_INVALID_REQUEST,
+            'details': response.json()
+        }), response.status_code
+
     
 
 

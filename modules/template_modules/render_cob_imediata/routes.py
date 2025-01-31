@@ -4,8 +4,9 @@ import cob_imediata.utils_cob as utils_cob
 from datetime import datetime
 import settings.error_messages as error_messages
 from urllib.parse import quote
-import re
+import re, requests
 from urllib.parse import unquote
+import pay_location.utils_plocation as utils_plocation
 
 # Crie o Blueprint para a documentação
 cob_imediata_tp = Blueprint('cob_imediata_tp', __name__)
@@ -81,14 +82,25 @@ def cob_imediata_post():
             }
             loc_id = response_data.get("loc", {}).get("id")  # Pegando ID dentro de "loc"
 
-
             # Codificar pix_details em JSON e então codificar para URL
-            pix_details_json = quote(json.dumps(pix_details))
 
-            # Redirecionar para gerar o Pix
-            return render_template("pix.html", pix=pix_details, loc_id=loc_id, qr_code_url="/qr_code_image?pix_details=" + unquote(pix_details_json))
-            #return redirect(url_for('routes.gerar_pix', pix_details=encoded_pix_details))
-            #return jsonify(response.json()), response.status_code 
+            # Chamar o outro endpoint após gerar o Pix
+            response = utils_plocation.PayLocationTxidQrcodeGet(loc_id)
+            if response.status_code == 200:
+                external_data = response.json()
+
+                # Passando a imagem do QR Code também
+                imagem_qrcode = external_data.get("imagemQrcode")  # Supondo que o campo correto seja esse
+
+                # Passando todos os dados para o frontend
+                return render_template("pix.html", 
+                                       pix=pix_details, 
+                                       loc_id=loc_id, 
+                                       link_visualizacao=external_data.get("linkVisualizacao", "Link não disponível"),
+                                       qr_code_image=imagem_qrcode)  # Passando a imagem do QR Code
+
+            else:
+                return jsonify({'error': 'Falha ao chamar o endpoint externo', 'details': external_data.json()}), external_data.status_code
 
         return jsonify({
             'error': error_messages.ERROR_INVALID_REQUEST,
