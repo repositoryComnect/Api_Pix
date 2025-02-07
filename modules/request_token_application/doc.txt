@@ -1,0 +1,5 @@
+Comando para compilar a aplicação:
+
+Instale o Python
+pip install -r requirements.txt
+pyinstaller --onefile --windowed --add-data "logo.png;." --add-data "config.json;." --name=TokenUpdater token_updater.py
