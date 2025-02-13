@@ -1,9 +1,8 @@
 import logging, requests, os, sys
 import ssl
-
 # Adiciona a pasta "modules" ao caminho de busca do Python
 sys.path.append(os.path.join(os.path.dirname(__file__), 'modules'))
-
+from threading import Thread
 from flask import Flask
 from authenticate.routes import auth_bp
 from modules.cob_imediata_postman.routes import cob_imediata_pt
@@ -13,6 +12,7 @@ from modules.pay_location.routes import pay_location_bp
 from modules.cob_lote.routes import cob_lote_bp
 from modules.envio_pagamento_pix.routes import env_pagamento_pix_bp
 from modules.template_modules.render_cob_imediata.routes import cob_imediata_tp
+from modules.template_modules.render_cob_vencimento.routes import cob_vencimento_tp
 from modules.template_modules.render_cob_imediata.utils import cob_imediata_ut
 from modules.cob_imediata_plugin.routes import cob_imediata_pg
 from authenticate.login.routes import login_bp
@@ -75,6 +75,7 @@ app.register_blueprint(webhook_wh)  # Webhook
 app.register_blueprint(login_bp)  # Login
 app.register_blueprint(cob_imediata_ut) # Utilidades cobrança imediata para poder realizar a exportação de dados CSV
 app.register_blueprint(cob_imediata_pg) # Rota cobrança imediata plugin chrome
+app.register_blueprint(cob_vencimento_tp) # Rota cobrança vencimento
 
 # ---------------------------------------------------------------------------------- Configurações Gerais -----------------------------------------------------------------------------------------------------------------------#
 app.config.from_object(Config)
@@ -104,7 +105,6 @@ def load_user(user_id):
 migrate = Migrate(app, db)
 
 # ---------------------------------------------------------------------------------- Teste Extensão ------------------------------------------------------------------------------------------------------------------------#
-
 # Permite CORS para todas as origens
 CORS(app)
 
@@ -112,24 +112,26 @@ CORS(app)
 CORS(app, resources={r"/v2/cob": {"origins": "chrome-extension://emmnehnlpjjnfmnanaegbjjblpaaoeib"}})
 
 # --------------------------------------------------------------------------------- Configuração de Certificados SSL -------------------------------------------------------------------------------------------------------#
-'''ssl_context = (
-    os.path.join(os.path.dirname(__file__), 'authenticate', 'ssl_authentication', 'fullchain.pem'),
-    os.path.join(os.path.dirname(__file__), 'authenticate', 'ssl_authentication', 'comnectlupa_wildcard.com.br.key')
-)'''
+cert_file = os.path.join(os.path.dirname(__file__), 'authenticate', 'ssl_authentication', 'fullchain.pem')
+key_file = os.path.join(os.path.dirname(__file__), 'authenticate', 'ssl_authentication', 'comnectlupa_wildcard.com.br.key')
+chain_file = os.path.join(os.path.dirname(__file__), 'authenticate', 'authentication_webhook', 'certificate-chain-homolog.crt') # Certificado público da Efí
 
-# --------------------------------------------------------------------------------- Inicialização do Servidor --------------------------------------------------------------------------------------------------------------#
+# Carregar o certificado e a chave
+ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS)
+ssl_context.load_cert_chain(certfile=cert_file, keyfile=key_file)
+
+# Adicionar a cadeia de certificados
+ssl_context.load_verify_locations(cafile=chain_file)
+
+#ssl_context.verify_mode = ssl.CERT_REQUIRED # Exige certificado do cliente
+#ssl_context.verify_mode = ssl.CERT_OPTIONAL  # Permite conexões sem certificado
+
+def run_server(port):
+    app.run(host='0.0.0.0', port=port, ssl_context=ssl_context)
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()  # Criação das tabelas no banco
-    cert_file = os.path.join(os.path.dirname(__file__), 'authenticate', 'ssl_authentication', 'fullchain.pem')
-    key_file = os.path.join(os.path.dirname(__file__), 'authenticate', 'ssl_authentication', 'comnectlupa_wildcard.com.br.key')
-    chain_file = os.path.join(os.path.dirname(__file__), 'authenticate', 'authentication_webhook', 'certificate-chain-homolog.crt') # Certificado público da Efí
-
-    # Carregar o certificado e a chave
-    ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS)
-    ssl_context.load_cert_chain(certfile=cert_file, keyfile=key_file)
-
-    # Adicionar a cadeia de certificados
-    ssl_context.load_verify_locations(cafile=chain_file)
-
-    app.run(debug=True, host='0.0.0.0', port=5000, ssl_context=ssl_context)
+    # Inicia o servidor em duas portas diferentes com SSL
+    Thread(target=run_server, args=(5000,)).start()
+    Thread(target=run_server, args=(443,)).start()
