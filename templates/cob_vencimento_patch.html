@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% include "model-header.html" %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/cob_imediata_txid_get.css') }}">
+</head>
+<body>
+    <h2>Alteração Cobrança</h2>
+    <div class="alert alert-success text-center" role="alert">
+        <strong>Sucesso!</strong> A alteração foi realizada.
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Data de Vencimento</th>
+                <th>Chave PIX</th>
+                <th>CPF do Devedor</th>
+                <th>Nome do Devedor</th>
+                <th>Solicitação do Pagador</th>
+                <th>Status</th>
+                <th>TXID</th>
+                <th>Valor (R$)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if pix %}
+                <tr>
+                    <td>{{ pix.calendario.dataDeVencimento }}</td>
+                    <td>{{ pix.chave }}</td>
+                    <td>{{ pix.devedor.cpf }}</td>
+                    <td>{{ pix.devedor.nome }}</td>
+                    <td>{{ pix.solicitacaoPagador }}</td>
+                    <td>{{ pix.status }}</td>
+                    <td>{{ pix.txid }}</td>
+                    <td>{{ pix.valor.original }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="9">{{ error if error else "Nenhum dado disponível" }}</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+
+    {% include "model-footer.html" %}
+</body>
+</html>

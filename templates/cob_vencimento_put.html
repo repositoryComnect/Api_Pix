@@ -8,7 +8,7 @@
     <div class="container my-5">
         <div class="card">
             <div class="card-header text-center bg-primary text-white">
-                <h3>Detalhes da Cobrança PIX</h3>
+                <h3>Detalhes da Cobrança com Vencimento PIX</h3>
             </div>
             <div class="card-body">
                 <!-- Mensagem de Sucesso ou Erro -->
@@ -22,24 +22,23 @@
                     </div>
 
                     <!-- Detalhes da Cobrança -->
-                    <h5 class="text-center my-4">Detalhes da Cobrança</h5>
+                    <h5 class="text-center my-4">Detalhes da Cobrança com Vencimento</h5>
                     <ul class="list-group">
                         <li class="list-group-item"><strong>Chave PIX:</strong> {{ pix.chave }}</li>
                         <li class="list-group-item"><strong>TxID:</strong> {{ pix.txid }}</li>
                         <li class="list-group-item"><strong>Nome do Devedor:</strong> {{ pix.devedor.nome }}</li>
-                        <li class="list-group-item"><strong>CPF do Devedor:</strong> {{ pix.devedor.cpf }}</li>
+                        <li class="list-group-item"><strong>CNPJ do Devedor:</strong> {{ pix.devedor.cnpj }}</li>
                         <li class="list-group-item"><strong>Valor:</strong> R$ {{ pix.valor.original }}</li>
                         <li class="list-group-item"><strong>Status:</strong> {{ pix.status }}</li>
-                        <li class="list-group-item"><strong>Data de Criação:</strong> {{ pix.calendario.criacao }}</li>
-                        <li class="list-group-item"><strong>Data de Expiração:</strong> {{ pix.calendario.expiracao }} horas</li>
-                        <li class="list-group-item"><strong>Localização:</strong> <a href="https://{{ pix.location }}" target="_blank">{{ pix.location }}</a></li>
+                        <li class="list-group-item"><strong>Data de Vencimento:</strong> {{ pix.calendario.dataDeVencimento }}</li>
+                        <li class="list-group-item"><strong>Localização:</strong> <a href="https://{{ pix.loc.location }}" target="_blank">{{ pix.loc.location }}</a></li>
                         <li class="list-group-item"><strong>Pix Copia e Cola:</strong> <code>{{ pix.pixCopiaECola }}</code></li>
                     </ul>
 
                 {% endif %}
             </div>
         </div>
-    </div> <br><br><br><br><br>
+    </div><br><br><br><br><br>
 
     <!-- Bootstrap JS -->
     {% include "model-footer.html" %}

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% include "model-header.html" %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/cob_imediata_txid_get.css') }}">
+</head>
+<body>
+    <h2>Consulta de Cobranças </h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Data de Criação</th>
+                <th>Data de Vencimento</th>
+                <th>Chave</th>
+                <th>CPF do Devedor</th>
+                <th>Nome do Devedor</th>
+                <th>Solicitação do Pagador</th>
+                <th>Status</th>
+                <th>TXID</th>
+                <th>Valor</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ pix.calendario.criacao }}</td>
+                <td>{{ pix.calendario.dataDeVencimento }}</td>
+                <td>{{ pix.chave }}</td>
+                <td>{{ pix.devedor.cpf }}</td>
+                <td>{{ pix.devedor.nome }}</td>
+                <td>{{ pix.solicitacaoPagador }}</td>
+                <td>{{ pix.status }}</td>
+                <td>{{ pix.txid }}</td>
+                <td>{{ pix.valor.original }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p><strong>Código Pix (Copia e Cola):</strong></p>
+    <textarea rows="5" cols="60" readonly>{{ pix.pixCopiaECola }}</textarea>
+
+    <h2>QR Code</h2>
+    <div class="borde_qrcode">
+        <img src="{{ qr_code_image }}" alt="QR Code do PIX" style="width:300px;height:300px;">
+    </div>
+
+    {% include "model-footer.html" %}
+</body>
+</html>
