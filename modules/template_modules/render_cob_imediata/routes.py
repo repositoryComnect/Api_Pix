@@ -1,11 +1,9 @@
 from flask import Blueprint, render_template, request, redirect, url_for, jsonify, request, json
 from flask_login import login_required
-import cob_imediata.utils_cob as utils_cob
+import cob_imediata_postman.utils_cob as utils_cob
 from datetime import datetime
 import settings.error_messages as error_messages
-from urllib.parse import quote
-import re, requests
-from urllib.parse import unquote
+import re
 import pay_location.utils_plocation as utils_plocation
 
 # Crie o Blueprint para a documentação
@@ -148,11 +146,60 @@ def get_cobrancas():
 
 
 
-#  Rota e método de request template GET TXID
 @cob_imediata_tp.route('/process_txid', methods=['POST'])
 def process_txid():
-    txid = request.form.get('txid')
-    return redirect(url_for('cob_imediata.cob_imediata_txid_get', txid = txid))
+    txid = request.form.get('txid')  # Pega o valor do txid enviado via POST
+    
+    if not txid:
+        return jsonify({'error': 'TxId não fornecido'}), 400
+    
+    # Validação do tamanho do txid
+    lenghtid = len(txid)
+    if 26 <= lenghtid <= 35:
+        # Código a ser executado se a condição for verdadeira
+        response = utils_cob.CobImediataTxidGet(txid)
+
+        # Verifica se a resposta da API foi bem-sucedida
+        if response.status_code == 200:
+            response_data = response.json()
+
+            # Campos da resposta
+            pix_details = {
+                "calendario": response_data.get("calendario"),
+                "devedor": response_data.get("devedor"),
+                "cpf": response_data.get("cpf"),
+                "nome": response_data.get("nome"),
+                "valor": response_data.get("valor"),
+                "chave": response_data.get("chave"),
+                "pixCopiaECola": response_data.get("pixCopiaECola"),
+                "revisao": response_data.get("revisao"),
+                "solicitacaoPagador": response_data.get("solicitacaoPagador"),
+                "txid": response_data.get("txid"),
+                "status": response_data.get("status"),
+            }
+            loc_id = response_data.get("loc", {}).get("id")
+
+            print(pix_details)
+
+            if loc_id:
+                response = utils_plocation.PayLocationTxidQrcodeGet(loc_id)
+                if response.status_code == 200:
+                    external_data = response.json()
+
+                    imagem_qrcode = external_data.get("imagemQrcode")  # Supondo que o campo correto seja esse
+
+                    # Passando todos os dados para o frontend
+                    return render_template("cob_imediata_get_txid.html", 
+                                           pix=pix_details, 
+                                           loc_id=loc_id, 
+                                           link_visualizacao=external_data.get("linkVisualizacao", "Link não disponível"),
+                                           qr_code_image=imagem_qrcode)
+            else:
+                return jsonify({'error': 'Falha ao chamar o endpoint externo', 'details': external_data.json()}), external_data.status_code
+
+        return jsonify({'error': 'Requisição inválida', 'details': response.json()}), response.status_code
+
+
 
 
 
@@ -230,7 +277,6 @@ def process_patch():
             # Processa a resposta
             if response.status_code == 200:
                 response_data = response.json()  # Captura os dados retornados
-                print(response_data)
                 return render_template('cob_imediata_patch_txid.html', pix=response_data)  # Passa os dados para o template
            
         except Exception as e:

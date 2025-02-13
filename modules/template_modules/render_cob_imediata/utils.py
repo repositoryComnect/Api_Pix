@@ -1,7 +1,7 @@
 import csv
 from io import StringIO
 from flask import Blueprint, request, make_response, jsonify
-from modules.cob_imediata.utils_cob import CobImediataGet
+from modules.cob_imediata_postman.utils_cob import CobImediataGet
 from datetime import datetime
 
 cob_imediata_ut = Blueprint('cob_imediata_ut', __name__)
