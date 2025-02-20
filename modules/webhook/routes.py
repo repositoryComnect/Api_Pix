@@ -1,30 +1,62 @@
 from flask import Blueprint, jsonify, request, json, abort
 import requests
+import hashlib
+import hmac
+import os
 
 webhook_wh = Blueprint('webhook_wh', __name__)
 
-# Middleware para verificar o certificado do cliente APENAS para as rotas que exigem mTLS
-'''@webhook_wh.before_request
-def verificar_certificado():
-    """
-    Exige um certificado do cliente apenas para as rotas sensíveis.
-    """
-    if request.path in ["/webhook", "/pix", "/configWebhook"]:
-        cert = request.environ.get("SSL_CLIENT_CERT")
-        if not cert:
-            abort(403, "Certificado de cliente obrigatório para este endpoint.")'''
+# IP autorizado
+AUTHORIZED_IP = '34.193.116.226'
+
+# Chave secreta para gerar e verificar o HMAC
+SECRET_KEY = os.environ.get("WEBHOOK_SECRET_KEY", "sua_chave_secreta")
+
+# Função para verificar o IP de origem
+'''def check_ip():
+    ip = request.remote_addr
+    if ip != AUTHORIZED_IP:
+        print(f"IP não autorizado: {ip}")
+        abort(403, description="IP não autorizado")
+
+# Função para verificar o HMAC
+def check_hmac():
+    hmac_hash = request.args.get('hmac')
+    if not hmac_hash:
+        abort(400, description="HMAC não fornecido")
+
+    # Gerar HMAC a partir da URL e da chave secreta
+    url = request.url.split('?')[0]  # Ignora a parte query da URL
+    computed_hmac = hmac.new(SECRET_KEY.encode(), url.encode(), hashlib.sha256).hexdigest()
+
+    # Verificar se o HMAC recebido corresponde ao gerado
+    if hmac_hash != computed_hmac:
+        print(f"HMAC inválido. Esperado: {computed_hmac}, recebido: {hmac_hash}")
+        abort(403, description="HMAC inválido")'''
 
 # Rota básica do Webhook
 @webhook_wh.route("/webhook", methods=["POST"])
 def imprimir():
+    # Verificar o IP de origem
+    #check_ip()
+
+    # Verificar o HMAC
+    #check_hmac()
+
     print("Requisição recebida")
     print("Cabeçalhos:", request.headers)
     print("Corpo:", request.json)
     return jsonify({"status": 200, "message": "Webhook recebido com sucesso!"})
 
 # Rota para manipular os dados do PIX
-@webhook_wh.route("/pix", methods=["POST"])
+@webhook_wh.route("/webhook/pix", methods=["POST"])
 def imprimirPix():
+    # Verificar o IP de origem
+    #check_ip()
+
+    # Verificar o HMAC
+    #check_hmac()
+
     data = request.json
     print(data)  # Apenas imprime os dados no terminal
 
@@ -34,31 +66,3 @@ def imprimirPix():
         json.dump(data, outfile)
         
     return jsonify({"status": 200, "message": "Dados do PIX recebidos e processados!"})
-
-# Rota para configurar o Webhook no servidor da Efí
-'''@webhook_wh.route("/configWebhook/<chave>", methods=["PUT"])
-def config_webhook(chave):
-    url = f"https://pix-h.api.efipay.com.br/v2/webhook/{chave}"
-
-    headers = {
-        'x-skip-mtls-checking': 'false'
-    }
-
-    params = {
-        'chave': chave
-    }
-
-    body = {
-        'webhookUrl': "https://efi.comnectlupa.com.br/webhook/"
-    }
-
-    response = requests.put(url, params=params, json=body, headers=headers)
-    print(response)
-
-    if response.status_code == 200:
-        print("Webhook configurado com sucesso!")
-    else:
-        print(f"Erro ao configurar webhook: {response.status_code}")
-        print(response.text)  # Mostra o conteúdo da resposta em caso de erro
-
-    return response.text, response.status_code'''
