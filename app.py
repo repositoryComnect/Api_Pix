@@ -1,4 +1,6 @@
 import logging, requests, os, sys
+from waitress import serve
+#from app import app  # ou o nome do seu aplicativo Flask
 import ssl
 # Adiciona a pasta "modules" ao caminho de busca do Python
 sys.path.append(os.path.join(os.path.dirname(__file__), 'modules'))
@@ -54,7 +56,6 @@ logging.getLogger("requests").setLevel(logging.DEBUG)
 
 # Para capturar todas as requisições HTTP no Flask
 logging.getLogger("werkzeug").setLevel(logging.DEBUG)
-
 
 # ---------------------------------------------------------------------------------------- Flask ---------------------------------------------------------------------------------------------------------------------------------#
 
@@ -112,26 +113,25 @@ CORS(app)
 CORS(app, resources={r"/v2/cob": {"origins": "chrome-extension://emmnehnlpjjnfmnanaegbjjblpaaoeib"}})
 
 # --------------------------------------------------------------------------------- Configuração de Certificados SSL -------------------------------------------------------------------------------------------------------#
-cert_file = os.path.join(os.path.dirname(__file__), 'authenticate', 'ssl_authentication', 'fullchain.pem')
-key_file = os.path.join(os.path.dirname(__file__), 'authenticate', 'ssl_authentication', 'comnectlupa_wildcard.com.br.key')
-chain_file = os.path.join(os.path.dirname(__file__), 'authenticate', 'authentication_webhook', 'certificate-chain-homolog.crt') # Certificado público da Efí
 
-# Carregar o certificado e a chave
-ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS)
+# Caminhos para os arquivos de certificado e chave
+cert_file = os.path.join(os.path.dirname(__file__), 'authenticate', 'ssl_authentication', '_.comnect.com.br', 'fullchainEfi.pem')
+key_file = os.path.join(os.path.dirname(__file__), 'authenticate', 'ssl_authentication', '_.comnect.com.br', 'comnect_wildcard_2024.key')
+chain_file = os.path.join(os.path.dirname(__file__), 'authenticate', 'authentication_webhook', 'certificate-chain-homolog.crt')
+
+# Criação do contexto SSL com suporte explícito ao TLS 1.2 e 1.3
+ssl_context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
 ssl_context.load_cert_chain(certfile=cert_file, keyfile=key_file)
 
-# Adicionar a cadeia de certificados
+# Adicionando a cadeia de certificados intermediários
 ssl_context.load_verify_locations(cafile=chain_file)
 
-#ssl_context.verify_mode = ssl.CERT_REQUIRED # Exige certificado do cliente
-#ssl_context.verify_mode = ssl.CERT_OPTIONAL  # Permite conexões sem certificado
-
 def run_server(port):
+    # Executando o servidor Flask com SSL
     app.run(host='0.0.0.0', port=port, ssl_context=ssl_context)
 
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()  # Criação das tabelas no banco
-    # Inicia o servidor em duas portas diferentes com SSL
-    Thread(target=run_server, args=(5000,)).start()
-    Thread(target=run_server, args=(443,)).start()
+    # Inicia o servidor na porta 443 com SSL
+    serve(app, host='0.0.0.0', port=5000)
