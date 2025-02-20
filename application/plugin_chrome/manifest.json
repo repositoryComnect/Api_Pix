@@ -19,6 +19,6 @@
       }
     },
     "host_permissions": [
-      "https://efi.comnectlupa.com.br:5000/*"
+      "https://efi.comnect.com.br/*"
     ]
   }

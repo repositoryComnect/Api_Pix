@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", function() {
             };
 
             try {
-                const response = await fetch("https://efi.comnectlupa.com.br:5000/cob_imediata_plugin", {  // Chama o endpoint correto do Flask
+                const response = await fetch("https://efi.comnect.com.br/cob_imediata_plugin", {  // Chama o endpoint correto do Flask
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(data)
