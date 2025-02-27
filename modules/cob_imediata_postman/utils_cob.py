@@ -32,7 +32,7 @@ def CobImediataPost(data):
       'Authorization': f"Bearer {token}",
       'Content-Type': 'application/json'
         }
-    print(headers)
+
     
     # Envia a requisição
     response = requests.post(url, headers=headers, json=data)

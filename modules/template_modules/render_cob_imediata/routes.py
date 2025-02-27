@@ -4,7 +4,7 @@ import cob_imediata_postman.utils_cob as utils_cob
 from datetime import datetime
 import settings.error_messages as error_messages
 import re
-import pay_location.utils_plocation as utils_plocation
+import pay_location_postman.utils_plocation as utils_plocation
 
 # Crie o Blueprint para a documentação
 cob_imediata_tp = Blueprint('cob_imediata_tp', __name__)
@@ -12,8 +12,8 @@ cob_imediata_tp = Blueprint('cob_imediata_tp', __name__)
 # Rota para exibir a documentação
 @cob_imediata_tp.route('/', methods=['GET', 'POST'])
 @login_required
-def documentacao():
-    return render_template('cob_imediata.html')
+def home():
+    return render_template('home.html')
 
 
 
@@ -75,6 +75,7 @@ def cob_imediata_post():
                 "valor": response_data.get("valor"),
                 "chave": response_data.get("chave"),
                 "pixCopiaECola": response_data.get("pixCopiaECola"),
+                "txid": response_data.get("txid"),
                 "status": response_data.get("status"),
                 "loc_id": response_data.get("loc", {}).get("id")  # Pegando ID dentro de "loc"
             }
@@ -178,8 +179,6 @@ def process_txid():
                 "status": response_data.get("status"),
             }
             loc_id = response_data.get("loc", {}).get("id")
-
-            print(pix_details)
 
             if loc_id:
                 response = utils_plocation.PayLocationTxidQrcodeGet(loc_id)

@@ -3,8 +3,16 @@ import requests
 import hashlib
 import hmac
 import os
+from datetime import datetime
+from settings.extensions import mongo
+from settings.credentials import Config
+from pymongo import MongoClient
+import pytz
 
 webhook_wh = Blueprint('webhook_wh', __name__)
+
+# Conexão com o MongoDB usando a URI
+client = MongoClient(Config.MONGO_URI)
 
 # IP autorizado
 AUTHORIZED_IP = '34.193.116.226'
@@ -48,6 +56,8 @@ def imprimir():
     print("Corpo:", request.json)
     return jsonify({"status": 200, "message": "Webhook recebido com sucesso!"})
 
+
+
 # Rota para manipular os dados do PIX
 @webhook_wh.route("/webhook/pix", methods=["POST"])
 def imprimirPix():
@@ -64,5 +74,35 @@ def imprimirPix():
     with open('data.txt', 'a') as outfile:
         outfile.write("\n")
         json.dump(data, outfile)
+
+    sao_paulo_tz = pytz.timezone('America/Sao_Paulo')
+    
+    # Obtém a data atual no fuso horário de São Paulo
+    data_brasil = datetime.now(sao_paulo_tz)
+
+    # Converte a data para UTC antes de persistir
+    data_utc = data_brasil.astimezone(pytz.utc)
+
+    if "pix" in data:
+        for pagamento in data["pix"]:
+            documento = {
+                "chave": pagamento["chave"],
+                "endToEndId": pagamento["endToEndId"],
+                "horario": pagamento["horario"],
+                "infoPagador": pagamento["infoPagador"],
+                "txid": pagamento["txid"],
+                "valor": float(pagamento["valor"]),  # Convertendo para número
+                "recebido_em": data_utc  # Timestamp de quando foi salvo no banco
+            }
+
+            try:
+                mongo.db.pix.insert_one(documento)
+                client.close()
+                print("Documento inserido com sucesso!")
+            except Exception as e:
+                print(f"Erro ao inserir documento: {e}")
+
         
     return jsonify({"status": 200, "message": "Dados do PIX recebidos e processados!"})
+
+

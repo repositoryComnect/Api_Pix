@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 import cob_imediata_postman.utils_cob as utils_cob, settings.error_messages as error_messages, requests
-import pay_location.utils_plocation as utils_plocation
+import pay_location_postman.utils_plocation as utils_plocation
 
 cob_imediata_pg = Blueprint('cob_imediata_pg', __name__)
 

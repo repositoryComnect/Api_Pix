@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request, render_template
-import modules.cob_vencimento.utils_cobv as utils_cobv
-import pay_location.utils_plocation as utils_plocation
+import modules.cob_vencimento_postman.utils_cobv as utils_cobv
+import pay_location_postman.utils_plocation as utils_plocation
 from datetime import datetime
 
 
@@ -11,11 +11,19 @@ def cob_vencimento_put():
     # Recebendo dados do formulário
     txid = request.form.get('txid')
 
+    # Função auxiliar para garantir que o valor é um inteiro válido
+    def get_int_value(value, default=1):
+        try:
+            # Tenta converter para int, se falhar retorna o valor default
+            return int(value)
+        except ValueError:
+            return default
+
     # Construção do payload
     payload = {
         "calendario": {
             "dataDeVencimento": request.form.get('dataDeVencimento'),  # Formato de data YYYY-MM-DD
-            "validadeAposVencimento": int(request.form.get('validadeAposVencimento'))
+            "validadeAposVencimento": get_int_value(request.form.get('validadeAposVencimento'))
         },
         "devedor": {
             "cnpj": request.form.get('cnpj'),  # Garantindo que é CNPJ
@@ -29,25 +37,23 @@ def cob_vencimento_put():
         "valor": {
             "original": request.form.get('valorOriginal'),  # Valor original como string com duas casas decimais
             "abatimento": {
-                "modalidade": int(request.form.get('abatimentoModalidade', 1)),  # Se não houver valor, define 1
-                "valorPerc": request.form.get('abatimentoValorPerc', "0.00")
+                "modalidade": get_int_value(request.form.get('abatimentoModalidade', '1')),  # Se não houver valor, define 1
+                "valorPerc": get_int_value(request.form.get('abatimentoValorPerc', "0.00"))
             },
             "desconto": {
-                "modalidade": int(request.form.get('descontoModalidade', 1)),
+                "modalidade": get_int_value(request.form.get('descontoModalidade', '1')),
                 "descontoDataFixa": [{
-
                     "data": request.form.get('descontoDataFixa'),
-                    "valorPerc": request.form.get('descontoValorPerc'),
-
-                    }]
+                    "valorPerc": get_int_value(request.form.get('descontoValorPerc', "0.00")),
+                }]
             },
             "juros": {
-                "modalidade": int(request.form.get('jurosModalidade', 1)),
-                "valorPerc": request.form.get('jurosValorPerc')
+                "modalidade": get_int_value(request.form.get('jurosModalidade', '1')),
+                "valorPerc": get_int_value(request.form.get('jurosValorPerc', '0.00'))
             },
             "multa": {
-                "modalidade": int(request.form.get('multaModalidade', 1)),
-                "valorPerc": request.form.get('multaValorPerc'),
+                "modalidade": get_int_value(request.form.get('multaModalidade', '1')),
+                "valorPerc": get_int_value(request.form.get('multaValorPerc', '1.00')),
             }
         },
         "chave": request.form.get('chave'),
@@ -60,16 +66,18 @@ def cob_vencimento_put():
         ]
     }
 
-    # Chamando a função para processar o pagamento (ou qualquer outra função da sua lógica)
+    # Chamando a função para processar o pagamento
     response = utils_cobv.CobVencimentoTxidPut(txid, payload)
     response_data = response.json()
 
-    if response.status_code == 201:
-    # Renderiza o template com os dados da cobrança
+    # Verificando se houve erro na resposta
+    if response.status_code != 200:  # ou outro código de erro relevante
+        # Exibe o erro no template
         return render_template("cob_vencimento_put.html", pix=response_data)
 
-    else:
-        return render_template("cob_vencimento_put.html", pix=response_data)
+    # Caso contrário, exibe os detalhes da cobrança
+    return render_template("cob_vencimento_put.html", pix=response_data)
+
 
 
 

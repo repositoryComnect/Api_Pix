@@ -23,6 +23,8 @@ def cob_imediata_post():
         response = utils_cob.CobImediataPost(data)
 
         return jsonify(response.json()), response.status_code
+    else:
+        return jsonify({'error': error_messages.ERROR_JSON_INVALIDO}), 400
 
 
 
