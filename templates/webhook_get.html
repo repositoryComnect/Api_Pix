@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style_webhook.css') }}">
     <title>Webhook</title>
+<link rel="stylesheet" href="{{url_for('static', filename='css/cob_imediata_get.css') }}">
 </head>
 <body>
     <body class="index-page">
@@ -28,24 +29,32 @@
                 </ul>
             </nav>
         </div>
-    <div class="container">
-        <h1>Webhook Consulta</h1>
-        <form id="chaveWebhook" method="POST" action="{{ url_for('web.get_data') }}">
-            <label for="chave">Digite a chave PIX:</label>
-            <input type="text" id="chave" name="chave" placeholder="CPF/CNPJ/E-mail ou Chave aleatória" required>
-            
-            <button type="submit" class="btn">Consultar</button>
-        </form><br><br><br><br>
-        
-        <form id="txidWebhook" method="POST" action="{{ url_for('web.get_data_txid') }}">
-            <label for="txid">Digite o TxId:</label>
-            <input type="text" id="txid" name="txid" placeholder="" required>
-            
-            <button type="submit" class="btn">Consultar</button>
-        </form>
-    </div>
-    
-    
+    <h2>Consulta Webhook</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Chave</th>
+                <th>endToEndId</th>
+                <th>Horário</th>
+                <th>Info. Pagador</th>
+                <th>TXID</th>
+                <th>Valor</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pix in pix %}
+            <tr>
+                <td>{{ pix.chave }}</td>
+                <td>{{ pix.endToEndId }}</td>
+                <td>{{ pix.horario }}</td>
+                <td>{{ pix.infoPagador }}</td>
+                <td>{{ pix.txid }}</td>
+                <td>{{ pix.valor }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
     {% include "model-footer.html" %}
 </body>
 </html>

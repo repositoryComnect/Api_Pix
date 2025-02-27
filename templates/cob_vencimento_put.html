@@ -11,10 +11,11 @@
                 <h3>Detalhes da Cobrança com Vencimento PIX</h3>
             </div>
             <div class="card-body">
-                <!-- Mensagem de Sucesso ou Erro -->
-                {% if pix.nome == "txid_duplicado" %}
+                <!-- Mensagem de Erro ou Sucesso -->
+                {% if pix.type == "https://pix.bcb.gov.br/api/v2/error/CobVOperacaoInvalida" %}
                     <div class="alert alert-danger text-center" role="alert">
-                        <strong>Erro:</strong> {{ pix.mensagem }}
+                        <strong>Erro:</strong> {{ pix.detail }}
+                        <p><strong>Razão:</strong> {{ pix.violacoes[0].razao }}</p>
                     </div>
                 {% else %}
                     <div class="alert alert-success text-center" role="alert">
@@ -26,15 +27,31 @@
                     <ul class="list-group">
                         <li class="list-group-item"><strong>Chave PIX:</strong> {{ pix.chave }}</li>
                         <li class="list-group-item"><strong>TxID:</strong> {{ pix.txid }}</li>
-                        <li class="list-group-item"><strong>Nome do Devedor:</strong> {{ pix.devedor.nome }}</li>
-                        <li class="list-group-item"><strong>CNPJ do Devedor:</strong> {{ pix.devedor.cnpj }}</li>
+                        <li class="list-group-item">
+                            <strong>Nome do Devedor:</strong>
+                            {% if pix.devedor %}
+                                {{ pix.devedor.nome }}
+                            {% else %}
+                                <span class="text-muted">Nome do devedor não disponível.</span>
+                            {% endif %}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>CNPJ do Devedor:</strong>
+                            {% if pix.devedor and pix.devedor.cnpj %}
+                                {{ pix.devedor.cnpj }}
+                            {% else %}
+                                <span class="text-muted">CNPJ do devedor não disponível.</span>
+                            {% endif %}
+                        </li>
                         <li class="list-group-item"><strong>Valor:</strong> R$ {{ pix.valor.original }}</li>
                         <li class="list-group-item"><strong>Status:</strong> {{ pix.status }}</li>
                         <li class="list-group-item"><strong>Data de Vencimento:</strong> {{ pix.calendario.dataDeVencimento }}</li>
-                        <li class="list-group-item"><strong>Localização:</strong> <a href="https://{{ pix.loc.location }}" target="_blank">{{ pix.loc.location }}</a></li>
+                        <li class="list-group-item">
+                            <strong>Localização:</strong>
+                            <a href="https://{{ pix.loc.location }}" target="_blank">{{ pix.loc.location }}</a>
+                        </li>
                         <li class="list-group-item"><strong>Pix Copia e Cola:</strong> <code>{{ pix.pixCopiaECola }}</code></li>
                     </ul>
-
                 {% endif %}
             </div>
         </div>
