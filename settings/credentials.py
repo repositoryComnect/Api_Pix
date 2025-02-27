@@ -3,12 +3,16 @@ import os
 
 # Credenciais de acesso
 credentials = {
-    "client_id": "Client_Id_486b1e4e17223413adaecbee4821da036bc61ca6",
-    "client_secret": "Client_Secret_b0ab68a12bf197ebc505e25c25b48b38ecaffa78",
-    "certificate" : r'C:\Users\WNB\OneDrive - Wireless Networks do Brasil LTDA\Área de Trabalho\API Pix\authenticate\homologacao-670788-APIEfi_cert.pem'
+    "client_id": "Client_Id_e8d44b81f25e9aa1cf3dc67afc62f5e684314dce",
+    "client_secret": "Client_Secret_965850baff064bd55435ce2950857fa9faf0f556",
+    "certificate" : r'C:\Users\WNB\OneDrive - Wireless Networks do Brasil LTDA\Área de Trabalho\API Pix\authenticate\certificado.pem'
 }
 
 class Config:
     SQLALCHEMY_DATABASE_URI = 'sqlite:///users.db'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+    # Configuração do MongoDB
+    MONGO_URI = "mongodb://localhost:27017/webhook"
+
     SECRET_KEY = os.urandom(24)  # Defina uma chave secreta segura
