@@ -1,0 +1,72 @@
+
+# Criar uma cobrança imediata
+
+- Rota:
+    /v2/cob  [POST]
+
+- Payload:
+    {
+  "calendario": {
+    "expiracao": 3600
+  },
+  "devedor": {
+    "cpf": "12345678909",
+    "nome": "Francisco da Silva"
+  },
+  "valor": {
+    "original": "9.50"
+  },
+  "chave": "luciano_guilherme@outlook.com",
+  "solicitacaoPagador": "Informe o número ou identificador do pedido."
+}
+
+
+# Criar uma cobrança imediata com TxId
+
+- Rota:     
+    /v2/cob/:txid   [PUT]
+
+- Payload:
+    {
+  "calendario": {
+    "expiracao": 3600
+  },
+  "devedor": {
+    "cpf": "12345678909",
+    "nome": "Francisco da Silva"
+  },
+  "valor": {
+    "original": "124.45"
+  },
+  "chave": "",
+  "solicitacaoPagador": "Informe o número ou identificador do pedido."
+}
+
+
+# Realizar uma alteração em uma cobrança imediata
+
+- Rota:
+    v2/cob/:txid    [PATCH]
+
+- Payload:
+
+    {
+    "calendario": {
+        "expiracao": 600
+    },
+    "devedor": {
+        "nome": "João João",
+        "cpf": "12345678910"
+    },
+    "valor": {
+        "original": "350.00"
+    },
+    "chave": "joao@email.com",
+    "solicitacaoPagador": "Informe o número ou identificador do pedido.",
+    "infoAdicionais": [
+        {
+            "nome": "Nome 1",
+            "valor": "valor 1"
+        }
+    ]
+}
