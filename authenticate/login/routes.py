@@ -50,7 +50,7 @@ def login():
             # Armazena o nome de usuário na sessão
             session['username'] = user.username
 
-            return redirect(url_for('cob_imediata_tp.documentacao'))  # Redireciona para a página sem enviar pela URL
+            return redirect(url_for('cob_imediata_tp.home'))  # Redireciona para a página sem enviar pela URL
 
         else:
             flash('Credenciais inválidas. Tente novamente.', 'danger')  # Exibe mensagem de erro

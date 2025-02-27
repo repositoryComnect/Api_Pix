@@ -58,3 +58,36 @@ def CreateTxid(lengh=26):
 def CreateE2eid():
     caracteres = string.ascii_letters + string.digits  # Letras e números
     return ''.join(random.choices(caracteres, k=32))
+
+
+
+def authenticateCobranca():
+    try:
+        auth = base64.b64encode(
+        (f"{credentials['client_id']}:{credentials['client_secret']}").encode()).decode()
+
+        url = endpoints.AUTH_URL_COB_H  #Para ambiente de Desenvolvimento
+
+        payload="{\r\n    \"grant_type\": \"client_credentials\"\r\n}"
+        headers = {
+        'Authorization': f"Basic {auth}",
+        'Content-Type': 'application/json'
+        }
+
+        response = requests.request("POST",
+                                url,
+                                headers=headers,
+                                data=payload)
+        
+        response_data = response.json()
+            # Captura o token
+
+        access_token = response_data.get('access_token')
+
+        return access_token  # Retorna apenas o token
+    
+    except Exception as e:
+        print("Erro durante a autenticação:", str(e))  # Para fins de depuração
+        return None
+
+    
