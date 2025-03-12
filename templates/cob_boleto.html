@@ -1,0 +1,71 @@
+    <div class="container">
+        <h1>Cobrança com Boleto</h1>
+        <p>Escolha um método </p>
+
+        <!-- Botões para colapsar os formulários -->
+        <div class="buttons">
+            <button class="btn btn-warning" type="button" data-bs-toggle="collapse" data-bs-target="#cobBoletoPost" aria-expanded="false" aria-controls="cobBoletoPost">POST</button>
+        </div>
+
+        <div class="collapse" id="cobBoletoPost">
+            <div class="card card-body mt-3">
+                <h2><button class="btn btn-outline-warning btn-lg w-10 text-start" disabled>POST</button>
+                        <strong>/v2/cob</strong>
+                    <br>
+                        <br>Preencha os campos para criar uma cobrança de boleto</h2>
+
+                <!-- Formulário de Cobrança Imediata -->
+                <form id="cobForm" method="POST" action="{{ url_for('cob_boleto_tp.cob_boleto_post') }}"> 
+
+                    <label for="productName"><strong>Nome Produto:</strong></label>
+                    <input type="text" id="productName" name="productName" placeholder="" required>
+                
+                    <label for="value"><strong>Valor:</strong></label>
+                    <input type="text" id="value" name="value" placeholder="00.00" required>
+                
+                    <label for="amount"><strong>Quantidade:</strong></label>
+                    <input type="text" id="amount" name="amount" placeholder="" required>
+                
+                    <label for="paymentName"><strong>Nome Pagador:</strong></label>
+                    <input type="text" id="paymentName" name="paymentName" placeholder="" required>
+                
+                    <label for="paymentCpf"><strong>CPF Pagador:</strong></label>
+                    <input type="text" id="paymentCpf" name="paymentCpf" placeholder="000.000.000.00" required>
+                
+                    <label for="expire"><strong>Expiração:</strong></label>
+                    <input type="date" id="expire" name="expire" placeholder="Informe até que data o boleto será válido" required>
+                
+                    <button type="submit" class="btn btn-primary mt-3">Enviar</button>
+                
+                </form>
+                    <h2>Exemplo de Payload</h2>
+                        <pre>
+                          {
+                            "items": [
+                                {
+                                    "name": "teste",
+                                    "value": 500,
+                                    "amount": 1
+                                }
+                            ],
+                            "shippings": [
+                                {
+                                    "name": "Default Shipping Cost",
+                                    "value": 100
+                                }
+                            ],
+                            "payment": {
+                                "banking_billet": {
+                                    "expire_at": "2025-03-20",
+                                    "customer": {
+                                        "name": "",
+                                        "cpf": ""
+                                    }
+                                }
+                            }
+                        }
+                        </pre>
+            </div>
+        </div>
+
+

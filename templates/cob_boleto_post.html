@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    {% include "model-header.html" %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/cob_boletos.css') }}">
+    <title>Detalhes do Boleto</title>
+</head>
+
+<body>
+    <br>
+        <br>
+            <br>
+                <br>
+    <div class="boleto-container">
+        <div class="boleto-header">
+            <h1>Detalhes do Boleto</h1>
+        </div>
+
+        <div class="boleto-info">
+            <div class="boleto-row">
+                <strong>Código de Barras:</strong>
+                <span class="boleto-value">{{ boleto.data.barcode }}</span>
+            </div>
+
+            {% if barcode_image %}
+            <div class="boleto-row">
+                <strong>Imagem do Código de Barras:</strong>
+                <br>
+                <img src="data:image/png;base64,{{ barcode_image }}" alt="Código de Barras">
+            </div>
+            {% endif %}
+
+            <div class="boleto-row">
+                <strong>Link Responsivo:</strong>
+                <a href="{{ boleto.data.link }}" class="boleto-value" target="_blank">Visualizar</a>
+            </div>
+
+            <div class="boleto-row">
+                <strong>Link Bolix:</strong>
+                <a href="{{ boleto.data.billet_link }}" class="boleto-value" target="_blank">Visualizar</a>
+            </div>
+
+            <div class="boleto-row">
+                <strong>Expiração:</strong>
+                <span class="boleto-value">{{ boleto.data.expire_at }}</span>
+            </div>
+
+            <div class="boleto-row">
+                <strong>ID da Cobrança:</strong>
+                <span class="boleto-value">{{ boleto.data.charge_id }}</span>
+            </div>
+
+            <div class="boleto-row">
+                <strong>Status:</strong>
+                <span class="boleto-value">{{ boleto.data.status }}</span>
+            </div>
+
+            <div class="boleto-row">
+                <strong>Valor:</strong>
+                <span class="boleto-value">R$ {{ boleto.data.total | round(2) }}</span>
+            </div>
+        </div>
+
+        <div class="boleto-footer">
+            <a href="{{ boleto.data.pdf }}" target="_blank" class="boleto-btn">Baixar PDF</a>
+        </div>
+    </div>
+
+    {% include "model-footer.html" %}
+</body>
+</html>
