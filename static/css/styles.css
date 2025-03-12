@@ -1,10 +1,9 @@
-
-
 body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
     margin: 0;
+    padding-bottom: 300px; /* Ajuste conforme necessário para dar espaço ao footer */
 }
 
 /* Corpo da página */
@@ -25,6 +24,13 @@ body.index-page {
     align-items: center;
     justify-content: space-between;
     padding: 30px;
+    margin: 0;  /* Remove qualquer margem padrão */
+    width: 100%;
+    max-width: 100%;
+    padding-left: 2;
+    padding-right: 2;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1), 
+            0px 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 /* Logo */
@@ -38,6 +44,7 @@ body.index-page {
     display: flex;
     align-items: center;
     justify-content: flex-start;
+    
 }
 
 .navmenu ul {
@@ -166,7 +173,7 @@ h2 {
     width: 100%;
     background-color: #f8f9fa;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-    margin-top: 40px; /* Ajuste o valor conforme necessário */
+    margin-top: 200px; /* Ajuste o valor conforme necessário */
 }
 
 
