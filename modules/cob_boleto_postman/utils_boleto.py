@@ -16,3 +16,17 @@ def CobBoletoPost(data):
     response = requests.post(url, headers=headers, json=data)
 
     return response
+
+def CobBoletoOneStepPost(data):
+    token = utils.authenticateCobranca()
+
+    url = f'{endpoints.URL_BOLETO_ONE_STEP_H}'
+
+    headers = {
+        'Authorization': f"Bearer {token}",
+        'Content-Type': 'application/json'
+        }
+    
+    response = requests.post(url, headers=headers, json=data)
+
+    return response

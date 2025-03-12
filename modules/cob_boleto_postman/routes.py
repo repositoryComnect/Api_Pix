@@ -9,8 +9,18 @@ cob_boleto_pt = Blueprint('cob_boleto_pt', __name__)
 
 @cob_boleto_pt.route('/v1/charge/one-step', methods=['POST'])
 def cob_boleto_one_step_pt():
+    if request.is_json:
+        data = request.get_json()
+        if not data:
+            return jsonify({'error': error_messages.ERROR_PAYLOAD_NOT_PROVIDED})
+        
+        else:
+            response = utils_boleto.CobBoletoOneStepPost(data)
 
-    return
+            return jsonify(response.json()), response.status_code
+    else:
+        return jsonify({'error': error_messages.ERROR_JSON_INVALIDO})
+
 
 
 @cob_boleto_pt.route('/v1/charge', methods=['POST'])
@@ -23,7 +33,7 @@ def cob_boleto_post_pt():
         
         else:
             response = utils_boleto.CobBoletoPost(data)
-            print(response)
+
             return jsonify(response.json()), response.status_code
     else:
         return jsonify({'error': error_messages.ERROR_JSON_INVALIDO})
